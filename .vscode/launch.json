@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Go Tests",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "/Users/mackheem/Documents/Projects/geras-sandbox-pro/pkg/gq",
+            "buildFlags": "-gcflags all=-N",
+            "env": {},
+            "showLog": true
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-package gq
+package geras
 
 import (
 	"context"
@@ -42,7 +42,7 @@ type GQ interface {
 }
 
 // implementation of GQ interface
-type _GQ struct {
+type _Geras struct {
 	status         int                        // status of GQ
 	initWg         *sync.WaitGroup            // wait group for initialization
 	cancelFunc     context.CancelFunc         // cancel function for execution context
@@ -56,7 +56,7 @@ type _GQ struct {
 	errorHandler   func(error)                // error handler
 }
 
-type NewGQInput struct {
+type NewGerasInput struct {
 	NumWorkers     int // number of workers
 	QueueSize      int // size of job queue
 	RateLimit      int // transactions allowed over rateTimeWindow
@@ -74,7 +74,7 @@ func Init(level logger.LogLevel) {
 }
 
 // create new GQ
-func NewGQ(input NewGQInput) (GQ, error) {
+func NewGeras(input NewGerasInput) (GQ, error) {
 	ctx, cancel := context.WithCancel(context.Background()) // create context
 	defer cancel()                                          // make sure to cancel execution context after function completes
 	buffQueue := make(chan Job, input.QueueSize)            // initialize buffered queue to hold incoming jobs
@@ -130,7 +130,7 @@ func NewGQ(input NewGQInput) (GQ, error) {
 		errorWg := &sync.WaitGroup{}
 		errorWg.Add(1)
 		gqController.GetEventListener() <- controller.ControlEvent{
-			Sender:   controller.GQ,
+			Sender:   controller.GERAS,
 			SenderId: 0,
 			Name:     controller.DISPATCHER_CREATE_FAILED,
 			Wg:       errorWg,
@@ -144,7 +144,7 @@ func NewGQ(input NewGQInput) (GQ, error) {
 	gqController.AddChannel(string(controller.DISPATCHER), dispatcherControlMsgListener) // add dispatcher to GQ controller
 	gqController.AddChannel(string(controller.CONTROLLER), reserved)                     // add reserved channel for controller
 
-	q := &_GQ{
+	q := &_Geras{
 		status:         OPEN_FOR_JOBS, // set status to open for jobs
 		shutdownSignal: shutdownSignal,
 		cancelFunc:     cancel,        // cancel function for execution context,
@@ -163,7 +163,7 @@ func NewGQ(input NewGQInput) (GQ, error) {
 	// Initialize all components (controller, dispatcher and workers)
 	q.initWg = &sync.WaitGroup{}
 	controlMsg := controller.ControlMsg{
-		Sender:   controller.GQ, // set sender to GQ
+		Sender:   controller.GERAS, // set sender to GQ
 		SenderId: 0,
 		Name:     controller.INIT, // set msg name to INIT
 		Wg:       q.initWg,
@@ -177,7 +177,7 @@ func NewGQ(input NewGQInput) (GQ, error) {
 }
 
 // add jobs
-func (gq *_GQ) AddJob(job Job) error {
+func (gq *_Geras) AddJob(job Job) error {
 	gq.initWg.Wait() // wait for initialization to complete
 	taw, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_ACTIVE_WORKERS)
 	taw2, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_AVAILABLE_WORKERS)
@@ -199,7 +199,7 @@ func (gq *_GQ) AddJob(job Job) error {
 }
 
 // start processing jobs
-func (gq *_GQ) Start() error {
+func (gq *_Geras) Start() error {
 	gq.initWg.Wait() // wait for initialization to complete
 	taw, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_ACTIVE_WORKERS)
 	taw2, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_AVAILABLE_WORKERS)
@@ -217,7 +217,7 @@ func (gq *_GQ) Start() error {
 type shutdownSignal struct{}
 
 // stop processing jobs
-func (gq *_GQ) Stop() error {
+func (gq *_Geras) Stop() error {
 	gq.status = CLOSED_FOR_JOBS // set status to closed for jobs
 	gq.shutdownSignal <- shutdownSignal{}
 	gq.cancelFunc() // send cancel signal to execution context
@@ -229,12 +229,12 @@ func (gq *_GQ) Stop() error {
 }
 
 // return capacity of job queue
-func (gq *_GQ) Cap() int {
+func (gq *_Geras) Cap() int {
 	return cap(gq.queue)
 }
 
 // return length of job queue
-func (gq *_GQ) Len() int {
+func (gq *_Geras) Len() int {
 	gq.initWg.Wait()
 	finalJobSignalCount, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_FINAL_JOB_SIGNALS_PLACED_ON_QUEUE)
 	sos.Debugf("final job signal count [%v] length [%v]", finalJobSignalCount, len(gq.queue))
@@ -242,29 +242,29 @@ func (gq *_GQ) Len() int {
 }
 
 // set error handler to deal with failed jobs
-func (gq *_GQ) SetErrorHandler(handler func(error)) {
+func (gq *_Geras) SetErrorHandler(handler func(error)) {
 	gq.errorHandler = handler
 }
 
 // return total number of failed jobs
-func (gq *_GQ) GetFailedJobsCount() int32 {
+func (gq *_Geras) GetFailedJobsCount() int32 {
 	result, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_FAILED_JOBS)
 	return result
 }
 
 // return total number of workers
-func (gq *_GQ) GetTotalWorkerCount() int32 {
+func (gq *_Geras) GetTotalWorkerCount() int32 {
 	return gq.dispatcher.getTotalWorkerCount()
 }
 
 // return total number of jobs dispatched
-func (gq *_GQ) GetTotalJobsDispatched() int32 {
+func (gq *_Geras) GetTotalJobsDispatched() int32 {
 	result, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_JOBS_DISPATCHED)
 	return result
 }
 
 // return total number of jobs throttled
-func (gq *_GQ) GetTotalJobsThrottled() int32 {
+func (gq *_Geras) GetTotalJobsThrottled() int32 {
 	result, _ := gq.atomicMetrics.GetAtom(atoms.TOTAL_JOBS_THROTTLED)
 	return result
 }

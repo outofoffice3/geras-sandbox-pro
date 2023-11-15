@@ -1,4 +1,4 @@
-package gq
+package geras
 
 import (
 	"fmt"
@@ -74,21 +74,21 @@ func TestGQ(t *testing.T) {
 	rateTimeWindow := 1
 
 	// Create a new GQ
-	gqConfig := NewGQInput{
+	gqConfig := NewGerasInput{
 		NumWorkers:     numWorker,
 		QueueSize:      queueSize,
 		RateLimit:      rateLimit,
 		RateTimeWindow: rateTimeWindow,
 	}
 
-	q, err := NewGQ(gqConfig)
+	q, err := NewGeras(gqConfig)
 	q.SetErrorHandler(func(err error) {
 		fmt.Printf("ERROR: %v", err)
 	})
 	a.NoError(err)
-	_gq, ok := q.(*_GQ)
-	a.True(ok)                 // should be type *_GQ
-	a.NotNil(_gq.errorHandler) // error handler should be set
+	_Geras, ok := q.(*_Geras)
+	a.True(ok)                    // should be type *_Geras
+	a.NotNil(_Geras.errorHandler) // error handler should be set
 
 	// TEST GQ INITIALIZATION
 	a.Equal(int32(3), q.GetTotalWorkerCount())
@@ -132,13 +132,13 @@ func TestGQ(t *testing.T) {
 	runtime.GC()
 	a.Equal(2, runtime.NumGoroutine())
 
-	throttledGQConfig := NewGQInput{
+	throttledGQConfig := NewGerasInput{
 		NumWorkers:     4,
 		QueueSize:      10,
 		RateLimit:      1,
 		RateTimeWindow: 2,
 	}
-	throttledGQ, err := NewGQ(throttledGQConfig)
+	throttledGQ, err := NewGeras(throttledGQConfig)
 	a.NoError(err)
 	a.NotNil(throttledGQ)
 	err = throttledGQ.Start()
@@ -161,13 +161,13 @@ func TestGQ(t *testing.T) {
 	runtime.GC()
 	a.Equal(2, runtime.NumGoroutine())
 
-	config := NewGQInput{
+	config := NewGerasInput{
 		NumWorkers:     0,
 		RateLimit:      10,
 		RateTimeWindow: 1,
 		QueueSize:      10,
 	}
-	errorGeras, err := NewGQ(config)
+	errorGeras, err := NewGeras(config)
 	a.Nil(errorGeras, "should be nil")
 	a.Error(err, "should return an error")
 

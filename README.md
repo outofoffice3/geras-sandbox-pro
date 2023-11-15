@@ -1,10 +1,20 @@
  <div style="text-align:center;">
- <img src="walk.gif" alt="walk" width="250"/>
+ <img src="walk.gif" alt="walk" width="200"/>
 </div>
 
- ### Geras
+ ### Geras ### 
 
 The **geras** package provides a flexible and efficient buffered job queue for processing and managing tasks concurrently. It offers a way to add, start, stop, and monitor the progress of jobs. This README will provide an overview of the package, its functionality, and best practices for using it effectively.
+
+## Why use Geras? ## 
+
+Quick questions to see if Geras is a potential fit for you: 
+- Are you building a service using Go? 
+- Do you need a buffer and orchestrator for requests within your service?
+- Are you handling tasks that are real time or batch? 
+- Would concurrency and parallelism enhance your service's performance?
+
+If you answered yes to any of these questions, **geras** can help simplify development & enhance performance of your service. 
  
  ## Table of Contents
  1. [Introduction](#introduction)
@@ -38,7 +48,9 @@ The **geras** package provides a flexible and efficient buffered job queue for p
 
  <img src="geras.gif" alt="The Hourglass" width="200"/>
 
-At a high level, Geras uses 3 main interfaces, dispatcher, ledger and controller.  
+At a high level, Geras uses 4 main interfaces, job, dispatcher, ledger and controller.  
+
+The [job](./pkg/gq/job.go) interface is the job that is being processed.  You can implement any logic required, as you satisfy the interface methods.
 
 The [dispatcher](./pkg/gq/dispatcher.go) dispatches jobs based on rate limit configuration.  
 
@@ -71,6 +83,8 @@ Geras uses a centralized controller to send control messages and receive control
 Geras can be used for various distributed system use cases : 
  
 **Managing hosted infrastructure** - As a service provider, working with customer apps that are deployed on serverless or platform services such as AWS Lambda, Fargate, Kubernetes etc is a great use case.  Performing regular upgrades / patches, responding to CVE's, setting up tenant infrastructure etc. could be safely processed using Geras.  The rate limiting allows you to ensure your service doesn't overconsume api quota and cause throttling. 
+
+**Real time or batch processing** - Any time you need an orchestrator to process jobs in real time or in batch is a great use case for geras.  Geras is an open orchestrator so as long as you implement the `Job` interface, geras will work. 
  
  ## Installation
  
@@ -107,7 +121,7 @@ Geras can be used for various distributed system use cases :
      }
  
      // Create a new Geras instance
-     geras, err := Geras.NewGeras(config)
+     geras, err := geras.NewGeras(config)
      if err != nil {
          // Handle the error
      }
@@ -118,7 +132,7 @@ Geras can be used for various distributed system use cases :
 
 ### Creating a Job
 
-To use the Geras package, you'll need to create jobs that implement the `Job` interface. The `Job` interface defines methods and metadata that allow you to define and manage your tasks efficiently.
+To use the Geras package, you'll need to create jobs that implement the `Job` interface. The `Job` interface defines methods that allow geras to interact with your custom job.
 
 Here's how to create a job that implements the `Job` interface:
 
@@ -126,7 +140,7 @@ Here's how to create a job that implements the `Job` interface:
 package main
 
 import (
-    "github.com/outofoffice3/geras-sandbox-pro/Geras"
+    "github.com/outofoffice3/geras-sandbox-pro/geras"
 )
 
 // MyJob is an example job that implements the Job interface.
@@ -193,7 +207,7 @@ func main() {
 Before processing jobs, you should start the Geras by calling the `Start()` method. This initializes the job processing. 
 
 ```go 
-err := Geras.Start()
+err := geras.Start()
 if err != nil {
     // Handle the error
 }
@@ -201,7 +215,7 @@ if err != nil {
 To stop Geras, call the `Stop()` method. This will wait for all jobs to complete and gracefully shut down. 
 
 ```go
-err := Geras.Stop()
+err := geras.Stop()
 if err != nil {
     // Handle the error
 }

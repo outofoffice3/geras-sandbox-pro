@@ -8,7 +8,7 @@ const (
 	DISPATCHER ComponentName = "DISPATCHER"
 	WORKER     ComponentName = "WORKER"
 	CONTROLLER ComponentName = "CONTROLLER"
-	GQ         ComponentName = "GQ"
+	GERAS      ComponentName = "GERAS"
 
 	INIT                  ControlMsgName = "CM_INIT"
 	START                 ControlMsgName = "CM_START"

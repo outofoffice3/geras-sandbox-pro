@@ -1,4 +1,4 @@
-package gq
+package geras
 
 type gqError struct {
 	message string

@@ -95,7 +95,7 @@ func (c *_Controller) listenForControlMsgs() {
 		case controlMsg, ok := <-c.controlMsgListener:
 			{
 				if !ok {
-					sos.Debugf("control msg listener channel closed")
+					sos.Debugf("control msg listener channel closed...exiting")
 					return
 				}
 				c.wg.Add(1)

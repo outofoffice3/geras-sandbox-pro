@@ -1,5 +1,5 @@
  <div style="text-align:center;">
- <img src="walk.gif" alt="walk" width="200"/>
+ <img src="./graphics/walk.gif" alt="walk" width="200"/>
 </div>
 
  ### Geras ### 
@@ -46,37 +46,37 @@ If you answered yes to any of these questions, **geras** can help simplify devel
 
  ## How it Works
 
- <img src="geras.gif" alt="The Hourglass" width="200"/>
+ <img src="./graphics/geras.gif" alt="The Hourglass" width="200"/>
 
 At a high level, Geras uses 4 main interfaces, job, dispatcher, ledger and controller.  
 
-The [job](./pkg/gq/job.go) interface is the job that is being processed.  You can implement any logic required, as you satisfy the interface methods.
+The [job](./pkg/geras/job.go) interface is the job that is being processed.  You can implement any logic required, as you satisfy the interface methods.
 
-The [dispatcher](./pkg/gq/dispatcher.go) dispatches jobs based on rate limit configuration.  
+The [dispatcher](./pkg/geras/dispatcher.go) dispatches jobs based on rate limit configuration.  
 
-The [ledger](./pkg/gq/ledger.go) maintains all the job execution data and metrics.  
+The [ledger](./pkg/geras/ledger.go) maintains all the job execution data and metrics.  
 
 The [controller](./internal/controller/controller.go) manages all the components, keeps track of all events and control how geras responds to events like initialization and shutdown.  
 
 ### Add Job to Geras ### 
 When you add a job to Geras, it's placed into a buffered channel monitored by the dispatcher. This keeps clients decoupled from the job execution. 
- <img src="addjob.png" alt="AddJob" width="full"/>
+ <img src="./graphics/addjob.png" alt="AddJob" width="full"/>
 
 ### Start Dispatch Loop ###
 When Geras starts the dispatch loop, it allows the dispatcher to receive jobs from the buffered job channel and dispatch them to an unbuffered channel that the worker pool listens on.  
 
- <img src="start.png" alt="Start" width="full"/>
+ <img src="./graphics/start.png" alt="Start" width="full"/>
 
 The dispatcher uses a fixed window rate limiter, which helps you stay within a specified rate limit that you can configure. This rate limiter ensures that you can control backpressure to you backend system.
 
- <img src="concurrent.png" alt="Concurrent" width="full"/>
+ <img src="./graphics/concurrent.png" alt="Concurrent" width="full"/>
 
 Workers run in an infinite loop processing jobs concurrently from the unbuffered channel.  They will exit only if signaled by the controller for various control events such as init or shutdown.  
 
 ### Control Messages and Events ###
 Geras uses a centralized controller to send control messages and receive control event.  **Control messages** are actions such as init, finalize etc., that the controller wants component(s) to perform.  **Control events** are the way components communicate important events to the controller such as a worker coming online or the dispatcher shutting down.  
 
- <img src="controller.png" alt="Concurrent" width="full"/>
+ <img src="./graphics/controller.png" alt="Concurrent" width="full"/>
 
 
  ## Use Cases
@@ -113,7 +113,7 @@ Geras can be used for various distributed system use cases :
      defer cancel() // Ensure the context is canceled when done
  
      // Define the Geras configuration
-    config := Geras.NewGerasInput{
+    config := geras.NewGerasInput{
         NumWorkers:     3,   // Number of worker goroutines
         QueueSize:      100, // Size of the job queue
         RateLimit:      10,  // Maximum transactions allowed
@@ -132,9 +132,9 @@ Geras can be used for various distributed system use cases :
 
 ### Creating a Job
 
-To use the Geras package, you'll need to create jobs that implement the `Job` interface. The `Job` interface defines methods that allow geras to interact with your custom job.
+To use the Geras package, you'll need to create jobs that implement the [Job](./pkg/geras/job.go) interface. The [Job](./pkg/geras/job.go) interface defines methods that allow geras to interact with your custom job.
 
-Here's how to create a job that implements the `Job` interface:
+Here's how to create a job that implements the [Job](./pkg/geras/job.go) interface:
 
 ```go
 package main
@@ -245,7 +245,6 @@ You can monitor the length and capacity of the job queue using the `Len()` and `
 ```go 
 length := geras.Len()  // Get the current length of the job queue
 capacity := geras.Cap()  // Get the capacity of the job queue
-
 ```
 
 ### Job Stats ### 

@@ -1,4 +1,7 @@
- <div style="text-align:center;">
+ 
+ **DISCLAIMER: GERAS STILL IN BETA. VERSION TAG COMING 12/1/2023** 
+ 
+ <div align="center">
  <img src="./graphics/walk.gif" alt="walk" width="200"/>
 </div>
 

@@ -2,7 +2,7 @@
  **DISCLAIMER: GERAS STILL IN BETA. VERSION TAG COMING 12/1/2023** 
  
  <div align="center">
- <img src="./graphics/walk.gif" alt="walk" width="200"/>
+ <img src="./graphics/walk.gif" alt="walk" width="250"/>
 </div>
 
  ### Geras ### 
@@ -49,7 +49,7 @@ If you answered yes to any of these questions, **geras** can help simplify devel
 
  ## How it Works
 
- <img src="./graphics/geras.gif" alt="The Hourglass" width="200"/>
+ <img src="./graphics/geras.gif" alt="The Hourglass" width="250"/>
 
 At a high level, Geras uses 4 main interfaces, job, dispatcher, ledger and controller.  
 

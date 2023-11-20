@@ -1,6 +1,12 @@
  
  **DISCLAIMER: GERAS STILL IN BETA. VERSION TAG COMING 12/1/2023** 
  
+ <div align ="center">
+
+![Codecov](https://img.shields.io/codecov/c/github/outofoffice3/geras-sandbox-pro?style=for-the-badge)
+
+</div>
+
  <div align="center">
  <img src="./graphics/walk.gif" alt="walk" width="250"/>
 </div>

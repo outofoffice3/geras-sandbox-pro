@@ -115,6 +115,7 @@ func (c *_Controller) listenForControlMsgs() {
 						sos.Debugf("skipping controller channel for finalize msg")
 						continue
 					}
+					finalizeWg.Add(1) // increment wait group counter
 					channel <- ControlMsg{
 						Sender:   CONTROLLER,
 						SenderId: 0,
@@ -123,7 +124,6 @@ func (c *_Controller) listenForControlMsgs() {
 						Data:     nil,
 						Params:   totalWorkers,
 					}
-					finalizeWg.Add(1) // increment wait group counter
 				}
 				finalizeWg.Wait() // wait for resources to finalize their work
 				sos.Debugf("control msg listener done waiting for finalize signals from all channels")

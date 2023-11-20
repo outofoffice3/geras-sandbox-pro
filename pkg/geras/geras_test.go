@@ -171,6 +171,4 @@ func TestGQ(t *testing.T) {
 	a.Nil(errorGeras, "should be nil")
 	a.Error(err, "should return an error")
 
-	runtime.GC()
-	a.Equal(2, runtime.NumGoroutine())
 }

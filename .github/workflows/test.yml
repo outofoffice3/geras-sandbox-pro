@@ -21,13 +21,13 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: go test -v ./...
+      run: go test -v ./pkg/geras -coverprofile=reports/coverage-results.out
 
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: test-results
+        name: coverage-results
         path: reports
 
     - name: Upload coverage reports to Codecov
